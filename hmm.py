@@ -1,14 +1,31 @@
-#pylint: disable=invalid-name
-
 'Module for hidden Markov models'
 
 import numpy as np
+
+def rand_right_stoch(size):
+    'Return a random uniformly distributed right stochastic matrix'
+    a = np.random.rand(*size)
+    return (a.T / a.sum(1)).T
 
 class HiddenMarkovModel:
 
     'Hidden Markov Model.'
 
-    def __init__(self, state_transition, emission, initial_state):
+    def __init__(self, state_transition, emission, initial_state=0):
+        """
+        initialize the HiddenMarkovModel.
+
+        Parameters
+        ----------
+        state_transition : array (N, N)
+            state transition probability matrix. state_transition[i][j] is the
+            probability of transition from state i to state j
+        emission : array (N, M)
+            measurement model emission matrix. emission[i][j] is the
+            probability of observing observation j from state i.
+        initial_state : int
+        """
+
         self._x = initial_state
         self._Phi = state_transition
         self._Theta = emission
