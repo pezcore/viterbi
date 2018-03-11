@@ -50,12 +50,12 @@ class HiddenMarkovModel:
         return self._Theta
 
     @property
-    def N(self):
+    def n_state_space(self):
         'Cardinality of the state space'
         return self._N
 
     @property
-    def M(self):
+    def n_obs_space(self):
         'Cardinality of the Observation space'
         return self._M
 
