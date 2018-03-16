@@ -41,25 +41,38 @@ class HiddenMarkovModel:
 
     @property
     def state_transition(self):
-        'Markov state transition matrix'
+        """
+        Markov state transition matrix
+
+        A (N, N) right stochastic matrix giving the probabilities of state
+        transition: state_transition[i,j] is the probability that system state
+        will transition from state i to state j.
+        """
         return self._Phi
 
     @property
     def emission(self):
-        'Emission Matrix'
+        """
+        Emission Matrix
+
+        A (N, M) right stochastic matrix giving the conditional probability of
+        the observations: emission[i, j] is the probability of observing
+        observation j conditioned on state i.
+        """
         return self._Theta
 
     @property
     def n_state_space(self):
-        'Cardinality of the state space'
+        'Cardinality of the state space (N)'
         return self._N
 
     @property
     def n_obs_space(self):
-        'Cardinality of the Observation space'
+        'Cardinality of the Observation space (M)'
         return self._M
 
     def __iter__(self):
+        'infinte Iterator of (state, observation)'
         while True:
             self._x = np.random.choice(self._N, p=self._Phi[self._x, :])
             y = np.random.choice(self._M, p=self._Theta[self._x, :])
@@ -74,13 +87,10 @@ def viterbi(y, A, B, Pi=None):
     y : array (T,)
         Observation state sequence. int dtype.
     A : array (K, K)
-        State transition matrix. This is a right stochastic matrix giving the
-        probabilities of state transition: A[i,j] is the probability that
-        system state will transition from state i to state j.
-    B :  array (K, M)
-        Emission matrix. A right stochastic matrix giving the conditional
-        probability of the observations: B[i, j] is the probability of
-        observing observation j conditioned on state i.
+        State transition matrix. See HiddenMarkovModel.state_transition  for
+        details.
+    B : array (K, M)
+        Emission matrix. See HiddenMarkovModel.emission for details.
     Pi: optional, (K,)
         Initial state probabilities: Pi[i] is the probability x[0] == i. If
         None, uniform initial distribution is assumed (Pi[:] == 1/K).
