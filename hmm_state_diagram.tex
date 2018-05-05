@@ -1,0 +1,22 @@
+\begin{tikzpicture}
+    \node[state, thick] (start) at (0, 0) {Start};
+    \node[state, thick] (x0) at (-1.5, -1.5) {$s_0$};
+    \node[state, thick] (x1) at (1.5, -1.5) {$s_1$};
+    \node[state, thick] (z0) at (-3, -4) {$o_0$};
+    \node[state, thick] (z1) at (0, -4) {$o_1$};
+    \node[state, thick] (z2) at (3, -4) {$o_2$};
+
+    \draw[every loop, >=latex, auto=right, thick]
+        (start) edge node {$\pi_0$} (x0)
+        (start) edge[auto=left] node {$\pi_1$} (x1)
+        (x0) edge[bend right=25, auto=right]      node {$a_{0,1}$} (x1)
+        (x1) edge[bend right=25, auto=left]       node {$a_{1,0}$} (x0)
+        (x0) edge[loop left]                      node {$a_{0,0}$} (x0)
+        (x1) edge[loop right]                     node {$a_{1,1}$} (x1)
+        (x0) edge[red]                            node {$b_{0,0}$} (z0)
+        (x0) edge[bend right=35, auto=right, red] node {$b_{0,1}$} (z1)
+        (x0) edge[bend right=25, auto=left, red]  node {$b_{0,2}$} (z2)
+        (x1) edge[bend left=25, blue]             node {$b_{1,0}$} (z0)
+        (x1) edge[bend left=35, auto=left, blue]  node {$b_{1,1}$} (z1)
+        (x1) edge[auto=left, blue]                node {$b_{1,2}$} (z2);
+\end{tikzpicture}

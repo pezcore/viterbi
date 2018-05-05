@@ -1,0 +1,24 @@
+\begin{tikzpicture}
+    % Setup the style for the states
+    \tikzset{node style/.style={state,
+                                minimum width=2cm,
+                                line width=1mm,
+                                fill=gray!20!white}}
+
+    % Draw the states
+    \node[node style] at (0, 0)       (bull)     {Bull};
+    \node[node style] at (5, 0)       (bear)     {Bear};
+    \node[node style] at (2.5, -4.33) (stagnant) {Stagnant};
+
+    % Connect the states with arrows
+    \draw[every loop, auto=right, line width=.5mm, >=latex]
+        (bull)     edge[bend right=25]            node {0.1} (stagnant)
+        (bull)     edge[bend right=25, auto=left] node {0.2} (bear)
+        (bear)     edge[bend right=25]            node {0.3} (bull)
+        (bear)     edge[bend right=25, auto=left] node {0.4} (stagnant)
+        (stagnant) edge[bend right=25]            node {0.2} (bear)
+        (stagnant) edge[bend right=25, auto=left] node {0.6} (bull)
+        (stagnant) edge[loop below]               node {0.2} (stagnant)
+        (bull)     edge[loop left]                node {0.7} (bull)
+        (bear)     edge[loop right]               node {0.3} (bear);
+\end{tikzpicture}

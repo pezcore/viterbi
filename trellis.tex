@@ -1,0 +1,62 @@
+\begin{tikzpicture}[x=1.5cm, y=-.75cm]
+    \node at (-0.5,0) [left] {$s_0$};
+    \node at (-0.5,1) [left] {$s_1$};
+    \node at (-0.5,2) [left] {$s_2$};
+    \node at (-0.5,3) [left] {$s_3$};
+
+    % Nodes
+    \node (s00) at (0, 0)[circle, fill=black] {};
+    \node (s10) at (1, 0)[circle, fill=black] {};
+    \node (s12) at (1, 2)[circle, fill=black] {};
+    \node (s20) at (2, 0)[circle, fill=black] {};
+    \node (s21) at (2, 1)[circle, fill=black] {};
+    \node (s22) at (2, 2)[circle, fill=black] {};
+    \node (s23) at (2, 3)[circle, fill=black] {};
+    \node (s30) at (3, 0)[circle, fill=black] {};
+    \node (s31) at (3, 1)[circle, fill=black] {};
+    \node (s32) at (3, 2)[circle, fill=black] {};
+    \node (s33) at (3, 3)[circle, fill=black] {};
+    \node (s40) at (4, 0)[circle, fill=black] {};
+    \node (s41) at (4, 1)[circle, fill=black] {};
+    \node (s50) at (5, 0)[circle, fill=black] {};
+
+    % edges
+    \draw[every loop, >=latex, thick]
+        (s00) edge node {} (s10)
+        (s00) edge node {} (s12)
+        (s12) edge node {} (s20)
+        (s12) edge node {} (s21)
+        (s12) edge node {} (s22)
+        (s12) edge node {} (s23)
+        (s10) edge node {} (s20)
+        (s10) edge node {} (s21)
+        (s10) edge node {} (s22)
+        (s10) edge node {} (s23)
+        (s20) edge node {} (s30)
+        (s20) edge node {} (s31)
+        (s20) edge node {} (s32)
+        (s20) edge node {} (s33)
+        (s21) edge node {} (s30)
+        (s21) edge node {} (s31)
+        (s21) edge node {} (s32)
+        (s21) edge node {} (s33)
+        (s22) edge node {} (s30)
+        (s22) edge node {} (s31)
+        (s22) edge node {} (s32)
+        (s22) edge node {} (s33)
+        (s23) edge node {} (s30)
+        (s23) edge node {} (s31)
+        (s23) edge node {} (s32)
+        (s23) edge node {} (s33)
+        (s30) edge node {} (s40)
+        (s30) edge node {} (s41)
+        (s31) edge node {} (s40)
+        (s31) edge node {} (s41)
+        (s32) edge node {} (s40)
+        (s32) edge node {} (s41)
+        (s33) edge node {} (s40)
+        (s33) edge node {} (s41)
+        (s40) edge node {} (s50)
+        (s41) edge node {} (s50);
+
+\end{tikzpicture}

@@ -1,0 +1,19 @@
+\begin{tikzpicture}[node distance=.15\textwidth]
+    \node (begin) {...};
+    \node[state, thick] (xk-1)[right of=begin] {$x_{k-1}$};
+    \node[state, thick] (xk)[right of=xk-1]    {$x_k$};
+    \node[state, thick] (xk+1)[right of=xk]    {$x_{k+1}$};
+    \node[state, thick] (zk-1)[below of=xk-1]  {$z_{k-1}$};
+    \node[state, thick] (zk)[below of=xk]      {$z_k$};
+    \node[state, thick] (zk+1)[below of=xk+1]  {$z_{k+1}$};
+    \node (end)[right of=xk+1] {...};
+    \draw[thick]
+        (begin)   edge node {} (xk-1)
+        (xk-1)    edge node {} (xk)
+        (xk)      edge node {} (xk+1)
+        (xk+1)    edge node {} (end)
+        (zk-1)    edge node {} (xk-1)
+        (zk)      edge node {} (xk)
+        (zk+1)    edge node {} (xk+1);
+
+\end{tikzpicture}
