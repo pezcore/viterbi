@@ -130,3 +130,52 @@ def viterbi(y, A, B, Pi=None):
         x[i - 1] = T2[x[i], i]
 
     return x, T1, T2
+
+class ViterbiDecoder:
+    "Online Viterbi decoder"
+
+    def __init__(self, costs):
+        "initialize the Decoder with a set of survivor costs"
+        self._N = len(costs)
+        self._survivors = [np.arange(self._N)]
+        self._costs = costs
+
+    def update(self, A):
+        "update with new Cost matrix"
+        X = (self._costs + A.T).T
+        self._survivors += [np.argmin(X, 0)]
+        self._costs = np.min(X, 0)
+
+    def _traceback(self):
+        y = range(self._N)
+        for s in reversed(self._survivors):
+            y = s[y]
+            yield y
+
+    def trace(self):
+        "trace the Viterbi paths leading to each node at the current time index"
+        return reversed(list(self._traceback()))
+
+    def prune(self):
+        "return the longest common path and prune it from survivors list"
+        #TODO verify this function
+        commonpath = []
+        for i, e in enumerate(self.trace()):
+            if np.all(e == e[0]):
+                commonpath += [e[0]]
+            else:
+                break
+
+        del self._survivors[:i]
+        return commonpath
+
+    def __str__(self):
+        out = ""
+        for s, t in zip(self._survivors, self.trace()):
+            for n in s:
+                out += f"{n:d} "
+            out += "| "
+            for n in t:
+                out += f"{n:d} "
+            out += "\n"
+        return out
