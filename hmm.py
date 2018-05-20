@@ -134,32 +134,87 @@ def viterbi(y, A, B, Pi=None):
     return x, T1, T2
 
 class ViterbiDecoder:
-    "Online Viterbi decoder"
+    """
+    Online Viterbi decoder
+
+    The online Viterbi decoder tracks the minimum cost path in a finite-state
+    trellis structure. It does this by tracking survivor segments and minimum
+    total state costs. At each time index, the total cost of the cheapest path
+    through the trellis to each state is updated, as well as a cumulative list
+    of survivor segments for each of the state nodes.
+
+    This is often used to track the Maximum a posteriori Probability estimate
+    of a discrete-time, finite-state Markov process observed in memoryless
+    noise.
+
+    The main way a ViterbiDecoder instance is used, is by iteratively updating
+    the survivor segment list by calling update() with the current time's
+    transition cost matrix. At any time, the Viterbi paths for each state can
+    be determined by backtracing the survivor segment list.
+    """
 
     def __init__(self, costs):
-        "initialize the Decoder with a set of survivor costs"
+        """
+        Initialize the decoder with a set of initial state node costs. The
+        state space dimension of the decoder is determined at this time by the
+        length of `costs` and remains constant.
+
+        Parameters
+        ----------
+        costs : array (N,) float
+            initial costs of each state.
+        """
         self._N = len(costs)
         self._survivors = deque([np.arange(self._N)])
         self._costs = costs
 
     def update(self, A):
-        "update with new Cost matrix"
+        """
+        Update survivor segment list and node costs using a transition cost
+        matrix. This is the main function of the ViterbiDecoder. Clients
+        iteratively update the state of the ViterbiDecoder by calling this for
+        each time index. This propagates the current time forward by one index.
+
+        Parameters
+        ----------
+        A : array (N, N) float
+            Cost matrix for current state transition. A[i,j] gives the cost of
+            going from state i at the current time index to state j in the next
+            time index.
+        """
         X = (self._costs + A.T).T
         self._survivors += [np.argmin(X, 0)]
         self._costs = np.min(X, 0)
 
-    def _traceback(self):
+    def traceback(self):
+        """
+        Return an iterator of back-traced survivor paths. Yields an np.ndarray
+        of shape (N,) where for yielded value x, x[i]'s traverse the Viterbi
+        path for leading to state i backward from the current time to the root
+        node.
+        """
         y = range(self._N)
         for s in reversed(self._survivors):
             y = s[y]
             yield y
 
     def trace(self):
-        "trace the Viterbi paths leading to each node at the current time index"
-        return reversed(list(self._traceback()))
+        """
+        Return an iterator tracing the Viterbi paths from the current root node
+        to each state node at the current time index. Equivalent to
+        reversed(list(self.traceback())). See traceback() documentation for
+        details.
+        """
+        return reversed(list(self.traceback()))
 
     def prune(self):
-        "return the longest common path and prune it from survivors list"
+        """
+        Return the longest common Viterbi path set (as a deque) and prune it
+        from survivors list. This frees memory used to store survivor segments
+        which future path decisions cannot depend. This re-roots the trellis at
+        the most recent time index on which all current Viterbi paths traverse
+        the same state node.
+        """
         commonpath = deque()
         for e in self.trace():
             if np.all(e == e[0]):
@@ -168,6 +223,12 @@ class ViterbiDecoder:
         return commonpath
 
     def __str__(self):
+        """
+        Print a trace of the survivor transitions and the Viterbi paths from
+        the current root node to the current time index. Time indices run down
+        lines of the output. Survivor transitions are on the left of the "|"
+        and Viterbi paths are on the right.
+        """
         sio = StringIO()
         for s, t in zip(self._survivors, self.trace()):
             print("".join(f"{n:d} " for n in s), "| ",
