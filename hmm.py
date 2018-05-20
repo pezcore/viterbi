@@ -1,5 +1,6 @@
 'Module for hidden Markov models'
 
+from collections import deque
 import numpy as np
 
 def rand_right_stoch(size):
@@ -137,7 +138,7 @@ class ViterbiDecoder:
     def __init__(self, costs):
         "initialize the Decoder with a set of survivor costs"
         self._N = len(costs)
-        self._survivors = [np.arange(self._N)]
+        self._survivors = deque([np.arange(self._N)])
         self._costs = costs
 
     def update(self, A):
@@ -158,15 +159,11 @@ class ViterbiDecoder:
 
     def prune(self):
         "return the longest common path and prune it from survivors list"
-        #TODO verify this function
-        commonpath = []
-        for i, e in enumerate(self.trace()):
+        commonpath = deque()
+        for e in self.trace():
             if np.all(e == e[0]):
+                self._survivors.popleft() # munch
                 commonpath += [e[0]]
-            else:
-                break
-
-        del self._survivors[:i]
         return commonpath
 
     def __str__(self):
