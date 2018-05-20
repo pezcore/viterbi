@@ -172,10 +172,8 @@ class ViterbiDecoder:
     def __str__(self):
         out = ""
         for s, t in zip(self._survivors, self.trace()):
-            for n in s:
-                out += f"{n:d} "
+            out += "".join(f"{n:d} " for n in s)
             out += "| "
-            for n in t:
-                out += f"{n:d} "
+            out += "".join(f"{n:d} " for n in t)
             out += "\n"
         return out
