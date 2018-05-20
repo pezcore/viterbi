@@ -1,6 +1,7 @@
 'Module for hidden Markov models'
 
 from collections import deque
+from io import StringIO
 import numpy as np
 
 def rand_right_stoch(size):
@@ -167,10 +168,8 @@ class ViterbiDecoder:
         return commonpath
 
     def __str__(self):
-        out = ""
+        sio = StringIO()
         for s, t in zip(self._survivors, self.trace()):
-            out += "".join(f"{n:d} " for n in s)
-            out += "| "
-            out += "".join(f"{n:d} " for n in t)
-            out += "\n"
-        return out
+            print("".join(f"{n:d} " for n in s), "| ",
+                  "".join(f"{n:d} " for n in t), sep="", file=sio)
+        return sio.getvalue()
