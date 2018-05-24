@@ -10,12 +10,32 @@ def rand_right_stoch(size):
     return (a.T / a.sum(1)).T
 
 class HiddenMarkovModel:
+    """
+    Hidden Markov Model. Represent a discrete-time, finite-state, Markov
+    process observed in memoryless noise.
+    """
 
-    'Hidden Markov Model.'
-
-    def __init__(self, state_transition, emission, initial_state=0):
+    def __init__(self, initial_state=0):
         """
         initialize the HiddenMarkovModel.
+
+        Parameters
+        ----------
+        initial_state : int
+            initial state of the Markov Process
+        """
+        self._x = initial_state
+
+    @property
+    def state(self):
+        'Markov chain state (hidden)'
+        return self._x
+
+    def next(self, A, B):
+        """
+        Propagate HiddenMarkovModel to the next time index using a state
+        transition matrix and return updated Markov chain state and observation
+        value based on the updated state.
 
         Parameters
         ----------
@@ -25,60 +45,27 @@ class HiddenMarkovModel:
         emission : array (N, M)
             measurement model emission matrix. emission[i][j] is the
             probability of observing observation j from state i.
-        initial_state : int
+
+        Returns
+        -------
+        x : int
+            updated state
+        z : int
+            observation of updated state
         """
+        N = A.shape[0]
+        M = B.shape[1]
+        self._x = np.random.choice(N, p=A[self._x, :])
+        z = np.random.choice(M, p=B[self._x, :])
+        return self._x, z
 
-        self._x = initial_state
-        self._Phi = state_transition
-        self._Theta = emission
-        self._M = emission.shape[1]
-        shp = state_transition.shape
-        self._N = shp[0]
-        assert len(shp) == 2 and shp[0] == shp[1]
-
-    @property
-    def state(self):
-        'Markov chain state (hidden)'
-        return self._x
-
-    @property
-    def state_transition(self):
+    def time_invariant_iter(self, A, B):
         """
-        Markov state transition matrix
-
-        A (N, N) right stochastic matrix giving the probabilities of state
-        transition: state_transition[i,j] is the probability that system state
-        will transition from state i to state j.
+        Return an infinite iterator of states and observation values assuming
+        time invariant state transition and emission matrices.
         """
-        return self._Phi
-
-    @property
-    def emission(self):
-        """
-        Emission Matrix
-
-        A (N, M) right stochastic matrix giving the conditional probability of
-        the observations: emission[i, j] is the probability of observing
-        observation j conditioned on state i.
-        """
-        return self._Theta
-
-    @property
-    def n_state_space(self):
-        'Cardinality of the state space (N)'
-        return self._N
-
-    @property
-    def n_obs_space(self):
-        'Cardinality of the Observation space (M)'
-        return self._M
-
-    def __iter__(self):
-        'infinte Iterator of (state, observation)'
         while True:
-            self._x = np.random.choice(self._N, p=self._Phi[self._x, :])
-            y = np.random.choice(self._M, p=self._Theta[self._x, :])
-            yield self._x, y
+            yield self.next(A, B)
 
 def viterbi(y, A, B, Pi=None):
     """
