@@ -221,3 +221,10 @@ class ViterbiDecoder:
             print("".join(f"{n:d} " for n in s), "| ",
                   "".join(f"{n:d} " for n in t), sep="", file=sio)
         return sio.getvalue()
+
+    @property
+    def costs(self):
+        """
+        Array of minimum cost of each state's Viterbi path at the current time
+        """
+        return self._costs.copy()
